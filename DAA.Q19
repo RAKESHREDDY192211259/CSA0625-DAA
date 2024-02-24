@@ -1,0 +1,58 @@
+#include <stdio.h>
+struct Item {
+    int value;
+    int weight;
+};
+double knapsack(int capacity, struct Item items[], int n) {
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            double valPerUnitWt1 = (double)items[i].value / items[i].weight;
+            double valPerUnitWt2 = (double)items[j].value / items[j].weight;
+            if (valPerUnitWt1 < valPerUnitWt2) {
+                struct Item temp = items[i];
+                items[i] = items[j];
+                items[j] = temp;
+            }
+        }
+    }
+
+    double totalValue = 0.0;
+    int currentWeight = 0;
+    for (int i = 0; i < n; i++) {
+        if (currentWeight + items[i].weight <= capacity) {
+            currentWeight += items[i].weight;
+            totalValue += items[i].value;
+        }
+        else {
+            int remainingCapacity = capacity - currentWeight;
+            totalValue += (double)items[i].value * remainingCapacity / items[i].weight;
+            break;
+        }
+    }
+
+    return totalValue;
+}
+
+int main() {
+    int capacity, n;
+
+    printf("Enter the capacity of the knapsack: ");
+    scanf("%d", &capacity);
+
+    printf("Enter the number of items: ");
+    scanf("%d", &n);
+
+    struct Item items[n];
+
+    printf("Enter the value and weight of each item:\n");
+    for (int i = 0; i < n; i++) {
+        printf("Item %d: ", i + 1);
+        scanf("%d %d", &items[i].value, &items[i].weight);
+    }
+
+    double maxValue = knapsack(capacity, items, n);
+
+    printf("Maximum value that can be put into the knapsack = %.2f\n", maxValue);
+
+    return 0;
+}
